@@ -9,7 +9,7 @@ load_dotenv()
 port = os.getenv("PORT")
 baudrate = os.getenv("BAUDRATE")
 # setup serial connection with arduino
-arduino = serial.Serial(port=port, baudrate=baudrate, timeout=.1)
+# arduino = serial.Serial(port=port, baudrate=baudrate, timeout=.1)
 
 # setup simulation environment
 env = gym.make('CartPole-v0')
