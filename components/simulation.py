@@ -13,7 +13,7 @@ from gym import logger, spaces
 from gym.error import DependencyNotInstalled
 
 
-class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
+class CartPoleModifiedEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     """
     ### Description
 
@@ -126,7 +126,8 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             force + self.polemass_length * theta_dot**2 * sintheta
         ) / self.total_mass
         thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length * (4.0 / 3.0 - self.masspole * costheta**2 / self.total_mass)
+            self.length * (4.0 / 3.0 - self.masspole *
+                           costheta**2 / self.total_mass)
         )
         xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
 
@@ -146,6 +147,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         done = bool(
             x < -self.x_threshold
             or x > self.x_threshold
+            # these define termination condition 1, since the pole starts at the lowest position it should be commented out
             or theta < -self.theta_threshold_radians
             or theta > self.theta_threshold_radians
         )
@@ -211,7 +213,8 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.screen is None:
             pygame.init()
             pygame.display.init()
-            self.screen = pygame.display.set_mode((screen_width, screen_height))
+            self.screen = pygame.display.set_mode(
+                (screen_width, screen_height))
         if self.clock is None:
             self.clock = pygame.time.Clock()
 
