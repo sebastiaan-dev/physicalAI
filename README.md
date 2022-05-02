@@ -12,9 +12,16 @@ In order to execute commands run the following
 pipenv shell
 ```
 
-## Usage
+## Development
 
 To install new project dependencies use
 ```sh
 pipenv install <package-name>
+```
+
+## Usage
+
+To run the application run the following in the root directory
+```sh
+python app.py
 ```
