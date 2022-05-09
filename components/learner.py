@@ -205,7 +205,7 @@ def learn():
                             gamma, optimizer, loss_fn, batch_size)
 
             # Visually render the environment (disable to speed up the training)
-            env.render()
+            env.render(mode="rgb_array")
 
             # Set the current state for the next iteration
             state = next_state

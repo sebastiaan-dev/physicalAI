@@ -3,6 +3,11 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu111/"
+verify_ssl = true
+
 [dev-packages]
 autopep8 = "*"
 
@@ -11,7 +16,7 @@ pyserial = "*"
 python-dotenv = "*"
 gym = "*"
 pygame = "*"
-torch = "==1.10.1+cu113"
+torch = {index = "pytorch",version = "==1.9.0"}
 
 [requires]
 python_version = "3"
