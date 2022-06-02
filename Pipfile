@@ -5,7 +5,7 @@ verify_ssl = true
 
 [[source]]
 name = "pytorch"
-url = "https://download.pytorch.org/whl/cu111/"
+url = "https://download.pytorch.org/whl/cu113"
 verify_ssl = true
 
 [dev-packages]
@@ -16,7 +16,7 @@ pyserial = "*"
 python-dotenv = "*"
 gym = "*"
 pygame = "*"
-torch = {index = "pytorch",version = "==1.9.0"}
+torch = {index = "pytorch",version = "==1.11.0+cu113"}
 
 [requires]
 python_version = "3"

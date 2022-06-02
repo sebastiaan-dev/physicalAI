@@ -216,6 +216,8 @@ def learn():
             # This will copy the weights of the policy network to the target network
             target_net.load_state_dict(policy_net.state_dict())
 
+        if score>=5000:
+            torch.save(policy_net.state_dict(), 'model_dicts')
         plotting_rewards.append(score)
         # Print the final score
         # Print the final score
