@@ -1,66 +1,89 @@
 #include <Arduino.h>
 #include <Encoder.h>
-#include <RotaryEncoder.h>
+#include <RotaryEncoder.h>  
 #include "config.h"
 
-long oldPosition1  = -999;
+RotaryEncoder CartEncoder(CartEncoderA, CartEncoderB, RotaryEncoder::LatchMode::TWO03);
+static int OldCartPos = 0;
+static int NewCartPos = 0;
 
-RotaryEncoder CartEncoder(CartEncoderA,CartEncoderB,RotaryEncoder::LatchMode::TWO03);
-RotaryEncoder MotorEncoder(MotorEncoderA,MotorEncoderB,RotaryEncoder::LatchMode::TWO03);
+RotaryEncoder MotorEncoder(MotorEncoderA, MotorEncoderB, RotaryEncoder::LatchMode::TWO03);
+static int OldMotorPos = 0;
+static int NewMotorPos = 0;
 
-//TODO
+void motorForward(int speed)
+{
+  constrain(speed,0,100);
+  map(speed,0,100,0,255);
+  analogWrite(MotorPin1, speed);
+  analogWrite(MotorPin2, LOW);
+}
 
-void motorForward(int speed){
+void motorBackward(int speed)
+{
+  constrain(speed,0,100);
+  map(speed,0,100,0,255);
+  analogWrite(MotorPin1, LOW);
+  analogWrite(MotorPin2, speed);
+}
+void motorStop()
+{
+  analogWrite(MotorPin1, LOW);
+  analogWrite(MotorPin2, LOW);
+}
+
+void calibrateMotorRange(){
 
 }
 
-void motorBackward(int speed){
-
-}
-void motorStop(){
-  
-}
-
-void setup() {
+void setup()
+{
   Serial.begin(9600);
-  pinMode(MotorPin1,OUTPUT);
-  pinMode(MotorPin2,OUTPUT);
+  pinMode(MotorPin1, OUTPUT);
+  pinMode(MotorPin2, OUTPUT);
 }
 
-void loop() {
-  if(Serial.available()){
-    switch (Serial.read())
+void loop()
+{
+  //accepting commands
+  if (Serial.available())
+  {
+    String input = Serial.readString(); // F|B|S:0-100
+    
+    switch (input.charAt(0))
     {
-    case 'j'://turn forward
-      digitalWrite(motor1, HIGH);
-      digitalWrite(motor2, LOW);
+    case 'F': // turn forward
+      motorForward(input.substring(1).toInt());
       break;
-    case 'k'://turn backward
-      digitalWrite(motor1, LOW);
-      digitalWrite(motor2, HIGH);
+    case 'B': // turn backward
+      motorBackward(input.substring(1).toInt());
       break;
-    case 'l'://Stop
-      digitalWrite(motor1, LOW);
-      digitalWrite(motor2, LOW);
+    case 'S': // Stop
+      motorStop();
       break;
     default:
+      Serial.println("Unknown command: " + input );
       break;
     }
   }
 
-  // long newPosition = rotEnc1.read();
-  // if (newPosition != oldPosition1) {
-  //   oldPosition1 = newPosition;
-  //   Serial.println(newPosition);
-  // }
-
- static int pos = 0;
+  //relaying encoder positions
+  //motorencoder position
+  NewMotorPos = CartEncoder.getPosition();
+  if (OldMotorPos != NewMotorPos)
+  {
+    Serial.println("M:");
+    Serial.println(NewMotorPos);
+    OldMotorPos = NewMotorPos;
+  }
+  //cartencoder position
   CartEncoder.tick();
 
-  int newPos = CartEncoder.getPosition();
-  if (pos != newPos) {
-    Serial.println(newPos);
-    pos = newPos;
+  NewCartPos = CartEncoder.getPosition();
+  if (OldCartPos != NewCartPos)
+  {
+    Serial.println("C:");
+    Serial.println(NewCartPos);
+    OldCartPos = NewCartPos;
   }
-
 }
