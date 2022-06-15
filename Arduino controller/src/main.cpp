@@ -3,6 +3,8 @@
 #include <RotaryEncoder.h>  
 #include "config.h"
 
+char * buffer;
+
 RotaryEncoder CartEncoder(CartEncoderA, CartEncoderB, RotaryEncoder::LatchMode::TWO03);
 static int OldCartPos = 0;
 static int NewCartPos = 0;
@@ -13,8 +15,10 @@ static int NewMotorPos = 0;
 
 void motorForward(int speed)
 {
-  constrain(speed,0,100);
-  map(speed,0,100,0,255);
+  //constrain(speed,0,100);
+  speed = map(speed,0,100,0,255);
+//Serial.print("Speed: ");
+//Serial.println(speed);
   analogWrite(MotorPin1, speed);
   analogWrite(MotorPin2, LOW);
 }
@@ -22,7 +26,9 @@ void motorForward(int speed)
 void motorBackward(int speed)
 {
   constrain(speed,0,100);
-  map(speed,0,100,0,255);
+  speed = map(speed,0,100,0,255);
+//Serial.print("Speed: ");
+//Serial.println(speed);
   analogWrite(MotorPin1, LOW);
   analogWrite(MotorPin2, speed);
 }
@@ -41,6 +47,8 @@ void setup()
   Serial.begin(9600);
   pinMode(MotorPin1, OUTPUT);
   pinMode(MotorPin2, OUTPUT);
+  buffer = (char *) malloc(BufferSize);
+  
 }
 
 void loop()
@@ -48,34 +56,46 @@ void loop()
   //accepting commands
   if (Serial.available())
   {
-    String input = Serial.readString(); // F|B|S:0-100
-    
-    switch (input.charAt(0))
+    memset(buffer,'\0',BufferSize);
+    Serial.readBytesUntil('#',buffer,BufferSize);// F|B|S:0-100#
+//Serial.print("Buffer: ");
+//Serial.println(buffer);
+    int input = 0;
+    switch (*strtok(buffer,":"))
     {
     case 'F': // turn forward
-      motorForward(input.substring(1).toInt());
+      input = atoi(strtok(NULL,":"));
+      motorForward(input);
+Serial.print("Forward command recieved: ");
+Serial.println(input);
       break;
     case 'B': // turn backward
-      motorBackward(input.substring(1).toInt());
+      input = atoi(strtok(NULL,":"));
+      motorBackward(input);
+Serial.print("Back command recieved: ");
+Serial.println(input);
       break;
     case 'S': // Stop
       motorStop();
+Serial.println("Stop command recieved");
       break;
     default:
-      Serial.println("Unknown command: " + input );
+Serial.print("Unknown command: " );
+Serial.println(buffer);
       break;
     }
   }
 
   //relaying encoder positions
   //motorencoder position
-  NewMotorPos = CartEncoder.getPosition();
+  NewMotorPos = MotorEncoder.getPosition();
   if (OldMotorPos != NewMotorPos)
   {
     Serial.println("M:");
     Serial.println(NewMotorPos);
     OldMotorPos = NewMotorPos;
   }
+
   //cartencoder position
   CartEncoder.tick();
 
