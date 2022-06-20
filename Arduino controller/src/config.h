@@ -1,7 +1,7 @@
-#define CartEncoderA 4
-#define CartEncoderB 8
-#define MotorEncoderA 6
-#define MotorEncoderB 7
+#define CartEncoderA 6
+#define CartEncoderB 7
+#define MotorEncoderA 4
+#define MotorEncoderB 2
 
 #define MotorPin1 3
 #define MotorPin2 5

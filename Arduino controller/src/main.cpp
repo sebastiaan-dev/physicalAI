@@ -16,7 +16,7 @@ static int NewMotorPos = 0;
 void motorForward(int speed)
 {
   //constrain(speed,0,100);
-  speed = map(speed,0,100,0,255);
+  //speed = map(speed,0,100,0,255);
 //Serial.print("Speed: ");
 //Serial.println(speed);
   analogWrite(MotorPin1, speed);
@@ -25,7 +25,7 @@ void motorForward(int speed)
 
 void motorBackward(int speed)
 {
-  constrain(speed,0,100);
+  //constrain(speed,0,100);
   speed = map(speed,0,100,0,255);
 //Serial.print("Speed: ");
 //Serial.println(speed);
@@ -88,10 +88,11 @@ Serial.println(buffer);
 
   //relaying encoder positions
   //motorencoder position
+  MotorEncoder.tick();
   NewMotorPos = MotorEncoder.getPosition();
   if (OldMotorPos != NewMotorPos)
   {
-    Serial.println("M:");
+    Serial.print("M:");
     Serial.println(NewMotorPos);
     OldMotorPos = NewMotorPos;
   }
@@ -102,7 +103,7 @@ Serial.println(buffer);
   NewCartPos = CartEncoder.getPosition();
   if (OldCartPos != NewCartPos)
   {
-    Serial.println("C:");
+    Serial.print("C:");
     Serial.println(NewCartPos);
     OldCartPos = NewCartPos;
   }
